@@ -1,0 +1,71 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.9.RELEASE'
+		springCloudServicesVersion = '1.5.0.RELEASE'
+		springCloudVersion = 'Dalston.SR4'
+		ojdbcVersion = '12.1.0.1'
+		mapStructVersion = '1.2.0.Final'
+		jacksonDataTypeVersion = '2.9.2'
+		springSecurityKerberosVersion = '1.0.1.RELEASE'
+		lombokVersion = '1.16.18'
+	}
+	repositories {
+		mavenCentral()
+		maven { url "https://plugins.gradle.org/m2/" }
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath 'net.ltgt.gradle:gradle-apt-plugin:0.13'
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'net.ltgt.apt'
+
+
+group = 'com.exp.services'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+
+repositories {
+	mavenCentral()
+	jcenter()
+}
+
+configurations {
+	compile.exclude module: "spring-boot-starter-tomcat"
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-actuator')
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-security')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile("org.springframework.boot:spring-boot-starter-aop")
+	compile("org.springframework.boot:spring-boot-starter-undertow")
+	compile("io.pivotal.spring.cloud:spring-cloud-services-starter-config-client")
+
+	compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonDataTypeVersion}")
+
+	compileOnly("org.projectlombok:lombok:${lombokVersion}")
+	runtime("com.oracle:ojdbc7:${ojdbcVersion}")
+	compile("org.mapstruct:mapstruct-jdk8:${mapStructVersion}")
+	apt "org.mapstruct:mapstruct-processor:${mapStructVersion}", "org.projectlombok:lombok:${lombokVersion}"
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.springframework.security:spring-security-test')
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "io.pivotal.spring.cloud:spring-cloud-services-dependencies:${springCloudServicesVersion}"
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
